@@ -1,9 +1,10 @@
 from objects import Product, Constraint
 import pulp
-
+import pandas as pd
 
 class ProfitOptimizer:
-    def __init__(self, no_of_products=None, no_of_constraints=None):
+    def __init__(self, no_of_products=None, no_of_constraints=None, csv_file=None):
+        self.csv_file = csv_file
         self.no_of_products = no_of_products
         self.no_of_constraints = no_of_constraints
         self.products = []
@@ -36,6 +37,30 @@ class ProfitOptimizer:
             product = Product(name, profit, usage=usage)
             self.products.append(product)
 
+    def load_from_csv(self):
+        if not self.csv_file:
+            raise ValueError("No CSV file provided.")
+
+        df = pd.read_csv(self.csv_file)
+
+        data = df[df["product_id"] != "LIMITS"]
+        limits_row = df[df["product_id"] == "LIMITS"].squeeze()
+
+        data["unit_profit"] = data["unit_profit"].astype(float)
+        usage_columns = df.columns[3:]
+        data[usage_columns] = data[usage_columns].astype(float)
+
+        self.constraints_list = [
+            Constraint(name=col, max_value=float(limits_row[col]))
+            for col in usage_columns
+        ]
+
+        for _, row in data.iterrows():
+            usage = {col: row[col] for col in usage_columns}
+            product = Product(name=row["product_name"], profit=row["unit_profit"], usage=usage)
+            self.products.append(product)
+
+
     def solve_lp(self):
         """Build and solve the LP model."""
 
@@ -66,9 +91,11 @@ class ProfitOptimizer:
         print("\nTotal Profit:", pulp.value(model.objective))
 
     def run(self):
-        self.collect_counts()
-        self.collect_constraints()
-        self.collect_products()
+        # self.collect_counts()
+        # self.collect_constraints()
+        # self.collect_products()
+        self.csv_file="LP_engine\csv_file\hybrid_manufacturing_cleaned.csv"
+        self.load_from_csv()
         self.solve_lp()   
 
     def output(self):

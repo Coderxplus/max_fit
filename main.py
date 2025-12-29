@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped , mapped_column
 
@@ -46,6 +46,24 @@ with app.app_context():
 def hello_world():
     return render_template("index.html")
 
+
+@app.route("/add_product", methods=["GET", "POST"])
+def add_product():
+    name = request.form["name"]
+    profit = request.form["profit"]
+    unit = request.form["unit"]
+    min_quantity = request.form["min_quantity"]
+    max_quantity = request.form["max_qunatity"]
+    product = Product(name=name, profit=profit, unit=unit, min_quantity=min_quantity, max_quantity=max_quantity)
+    db.session.add(product)
+    db.session.commit()
+
+@app.route("/delete_product/<response>", methods=["GET", "POST"])
+def delete(response):
+    data = Product.query.filter_by(id=response).first_or_404()
+    db.session.delete(data)
+    db.session.commit()
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.run(debug=True)
