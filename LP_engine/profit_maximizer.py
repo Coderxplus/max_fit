@@ -10,30 +10,10 @@ class ProfitOptimizer:
         self.products = []
         self.constraints_list = []
 
-    def collect_counts(self):
-        if self.no_of_products is None:
-            self.no_of_products = int(input("Enter number of products: "))
-        if self.no_of_constraints is None:
-            self.no_of_constraints = int(input("Enter number of constraints: "))
+    def collect_constraints(self, name, max_val):
+        self.constraints_list.append(Constraint(name, max_val))
 
-    def collect_constraints(self):
-        for _ in range(self.no_of_constraints):
-            print("Enter system-wide constraints:")
-            name = input("Enter constraint name (e.g. Time, Labour): ")
-            max_val = float(input("Enter max allowed value of this constraint: "))
-            self.constraints_list.append(Constraint(name, max_val))
-
-    def collect_products(self):
-        for _ in range(self.no_of_products):
-            print("-----------------------------------------------------------------")
-            name = input("Enter name of product: ")
-            profit = float(input("Enter profit per unit ($): "))
-
-            usage = {}
-            for constraint in self.constraints_list:
-                val = float(input(f"Enter usage of '{constraint.name}' for product '{name}': "))
-                usage[constraint.name] = val
-
+    def collect_products(self, name, profit, usage):
             product = Product(name, profit, usage=usage)
             self.products.append(product)
 
@@ -57,38 +37,48 @@ class ProfitOptimizer:
 
         for _, row in data.iterrows():
             usage = {col: row[col] for col in usage_columns}
-            product = Product(name=row["product_name"], profit=row["unit_profit"], usage=usage)
+            product = Product(name=row["product_id"], profit=row["unit_profit"], usage=usage)
             self.products.append(product)
-
 
     def solve_lp(self):
         """Build and solve the LP model."""
-
-
+        
         model = pulp.LpProblem("Product_Mix_Optimization", pulp.LpMaximize)
 
-
+        # Create variables
         qty_vars = {p.name: pulp.LpVariable(p.name, lowBound=0, cat="Continuous")
                     for p in self.products}
 
-
+        # Objective function
         model += pulp.lpSum(qty_vars[p.name] * p.profit for p in self.products)
 
+        # Constraints
         for constraint in self.constraints_list:
             model += pulp.lpSum(
                 qty_vars[p.name] * p.usage[constraint.name]
                 for p in self.products
             ) <= constraint.max_value, constraint.name
 
+        # Solve the model
         model.solve()
 
-        print("\n===== OPTIMAL SOLUTION =====")
-        print(f"Status: {pulp.LpStatus[model.status]}\n")
+        # Total profit
+        total_profit = pulp.value(model.objective)
+        print(f"\nOptimal objective (total profit): {total_profit:.4f}\n")
 
+        # Non-zero quantities
+        print("Quantities (non-zero):")
         for p in self.products:
-            print(f"{p.name}: {qty_vars[p.name].varValue}")
-
-        print("\nTotal Profit:", pulp.value(model.objective))
+            qty = qty_vars[p.name].varValue
+            if qty and qty > 0:
+                print(f"  {p.name}: {qty:.4f}")
+        
+        # Resource usage summary
+        print("\nResource usage:")
+        for constraint in self.constraints_list:
+            used = sum(qty_vars[p.name].varValue * p.usage[constraint.name] for p in self.products)
+            percent = (used / constraint.max_value) * 100 if constraint.max_value != 0 else 0
+            print(f"  {constraint.name}: used {used:.4f} / limit {constraint.max_value:.4f} ({percent:.1f}%)")
 
     def run(self):
         # self.collect_counts()
