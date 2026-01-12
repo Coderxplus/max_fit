@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Products</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🎯 Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="constraints.html">Constraints</a></li>
+                <li><a href="assignments.html">Product-Constraints</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="results.html">Results</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-cart-shopping"></i> Products Management</h1>
+            <p>Add and manage products with profit margins and quantity limits</p>
+        </header>
+
+        <div class="card">
+            <h2>Add New Product</h2>
+            <div class="info-box">
+                <h3>📦 What is a Product?</h3>
+                <p>Define products you want to optimize. Each product has a profit margin, unit type, and quantity limits.</p>
+            </div>
+            
+            <form action="/api/products" method="POST" class="form">
+                <div class="form-group">
+                    <label for="productName">Product Name *</label>
+                    <input type="text" id="productName" name="name" placeholder="e.g., Bread" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profitPerUnit">Profit per Unit *</label>
+                        <input type="number" id="profitPerUnit" name="profit" placeholder="e.g., 50.00" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unit">Unit *</label>
+                        <input type="text" id="unit" name="unit" placeholder="e.g., kg, pcs, liters" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="minQuantity">Min Quantity *</label>
+                        <input type="number" id="minQuantity" name="min_quantity" placeholder="e.g., 0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxQuantity">Max Quantity *</label>
+                        <input type="number" id="maxQuantity" name="max_quantity" placeholder="e.g., 1000" step="0.01" required>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Save Product</button>
+                    <button type="reset" class="btn btn-secondary">🔄 Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>📋 Product List</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Profit/Unit</th>
+                            <th>Unit</th>
+                            <th>Min Qty</th>
+                            <th>Max Qty</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Bread</strong></td>
+                            <td>$25.00</td>
+                            <td>loaves</td>
+                            <td>0</td>
+                            <td>500</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="edit-product.html?id=1" class="btn btn-small btn-edit">✏️ Edit</a>
+                                    <form action="/api/products/1" method="POST" style="display: inline;">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cookies</strong></td>
+                            <td>$15.50</td>
+                            <td>dozens</td>
+                            <td>0</td>
+                            <td>1000</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="edit-product.html?id=2" class="btn btn-small btn-edit">✏️ Edit</a>
+                                    <form action="/api/products/2" method="POST" style="display: inline;">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+</body>
+</html>

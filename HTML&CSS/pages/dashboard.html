@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🎯 Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="constraints.html">Constraints</a></li>
+                <li><a href="assignments.html">Product-Constraints</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="CSV.html">CSV</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1>📊 Optimization Dashboard</h1>
+            <p>Final production plan and detailed resource utilization</p>
+        </header>
+
+        <!-- Optimization Results -->
+        <div class="result-card">
+            <h2>Optimization Results</h2>
+
+            <div class="product-result">
+                <h3>Product A</h3>
+                <p><strong>Quantity Produced:</strong> 40 units</p>
+                <p><strong>Optimal Objective(total profits):</strong> ₦8,000</p>
+            </div>
+
+            <div class="product-result">
+                <h3>Product B</h3>
+                <p><strong>Quantity Produced(total profit):</strong> 30 units</p>
+                <p><strong>Optimal Objective(total Profit):</strong> ₦6,000</p>
+            </div>
+        </div>
+
+        <!-- Resource Usage -->
+        <div class="result-card">
+            <h2>Resource Usage Per Product</h2>
+
+            <!-- Product A Resources -->
+            <div class="product-result">
+                <h3>Product A</h3>
+
+                <div class="resource-row resource-ok">
+                    <span class="resource-name">Material</span>
+                    <span class="resource-value">
+                        used 2.4964 / limit 5.0000 (49.9%)
+                    </span>
+                </div>
+
+                <div class="resource-row resource-full">
+                    <span class="resource-name">Time</span>
+                    <span class="resource-value">
+                        used 120.0000 / limit 120.0000 (100.0%)
+                    </span>
+                </div>
+
+                <div class="resource-row resource-ok">
+                    <span class="resource-name">Energy</span>
+                    <span class="resource-value">
+                        used 2.1536 / limit 14.0000 (15.4%)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Product B Resources -->
+            <div class="product-result">
+                <h3>Product B</h3>
+
+                <div class="resource-row resource-ok">
+                    <span class="resource-name">Material</span>
+                    <span class="resource-value">
+                        used 1.8000 / limit 5.0000 (36.0%)
+                    </span>
+                </div>
+
+                <div class="resource-row resource-full">
+                    <span class="resource-name">Time</span>
+                    <span class="resource-value">
+                        used 120.0000 / limit 120.0000 (100.0%)
+                    </span>
+                </div>
+
+                <div class="resource-row resource-ok">
+                    <span class="resource-name">Energy</span>
+                    <span class="resource-value">
+                        used 1.2000 / limit 14.0000 (8.6%)
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
