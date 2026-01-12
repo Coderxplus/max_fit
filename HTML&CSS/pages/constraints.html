@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Constraints</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🎯 Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="constraints.html" class="active">Constraints</a></li>
+                <li><a href="assignments.html">Product-Constraints</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="results.html">Results</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-link"></i> Constraints Management</h1>
+            <p>Define business limitations and resource availability</p>
+        </header>
+
+        <div class="card">
+            <h2>Add New Constraint</h2>
+            <div class="info-box">
+                <h3>⚠️ What is a Constraint?</h3>
+                <p>Define business limitations like machine hours, raw materials, budget, or labor. These limit how much you can produce.</p>
+            </div>
+            
+            <form action="/api/constraints" method="POST" class="form">
+                <div class="form-group">
+                    <label for="constraintName">Constraint Name *</label>
+                    <input type="text" id="constraintName" name="name" placeholder="e.g., Machine Hours, Flour (kg), Budget" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxValue">Max Value *</label>
+                    <input type="number" id="maxValue" name="max_value" placeholder="e.g., 100" step="0.01" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Save Constraint</button>
+                    <button type="reset" class="btn btn-secondary">🔄 Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>📋 Constraint List</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Constraint Name</th>
+                            <th>Max Value</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Machine Hours</strong></td>
+                            <td>240 hours</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="edit-constraint.html?id=1" class="btn btn-small btn-edit">✏️ Edit</a>
+                                    <form action="/api/constraints/1" method="POST" style="display: inline;">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flour (kg)</strong></td>
+                            <td>500 kg</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="edit-constraint.html?id=2" class="btn btn-small btn-edit">✏️ Edit</a>
+                                    <form action="/api/constraints/2" method="POST" style="display: inline;">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+</body>
+</html>
