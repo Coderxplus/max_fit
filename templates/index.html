@@ -3,9 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Maxfit - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <h1>Hello World</h1>
+        <div class="nav-container">
+            <div class="logo"><i class="fa-solid fa-bullseye"></i> Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('get_products') }}">Products</a></li>
+                <li><a href="{{ url_for('get_constraints') }}">Constraints</a></li>
+                <li><a href="{{ url_for('get_usages') }}">Product-Constraints</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('view_csv') }}">CSV</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <header class="hero">
+            <h1><i class="fa-solid fa-bullseye"></i> Welcome to Maxfit</h1>
+            <p>Product Optimization & Constraint Management System</p>
+        </header>
+
+        <div class="card-grid">
+            <div class="feature-card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h2>Products</h2>
+                <p>Add and manage products with profit margins, units, and quantity limits.</p>
+                <a href="products.html" class="btn btn-primary">Manage Products</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-link"></i>
+                </div>
+                <h2>Constraints</h2>
+                <p>Define business limitations like machine hours, raw materials, and budget.</p>
+                <a href="constraints.html" class="btn btn-primary">Manage Constraints</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-icon">
+                   <i class="fa-solid fa-cubes"></i>
+                </div>
+                <h2>Product-Constraints</h2>
+                <p>Assign constraint usage values to products for optimization.</p>
+                <a href="assignments.html" class="btn btn-primary">Manage Assignments</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h2>Dashboard</h2>
+                <p>Get an overview of all products, constraints, and assignments.</p>
+                <a href="dashboard.html" class="btn btn-primary">Go to Dashboard</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-icon">
+                    <i class="fa-solid fa-file-csv"></i>
+                </div>
+                <h2>Upload Results (CSV)</h2>
+                <p>Upload optimization output as a CSV file to visualize results on the dashboard.</p>
+                <a href="CSV.html" class="btn btn-primary">
+                    Upload CSV
+                </a>
+            </div>
+
+        </div>
+
+        <div class="card info-section">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Add Products</h3>
+                    <p>Start by defining the products you want to optimize with their profit margins and quantity limits.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Define Constraints</h3>
+                    <p>Set up your business limitations such as available machine hours, raw materials, or budget.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Assign Usage</h3>
+                    <p>Specify how much of each constraint each product consumes during production.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
 </body>
 </html>

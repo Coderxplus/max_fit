@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Product-Constraints</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+        <div class="nav-container">
+            <div class="logo"><i class="fa-solid fa-bullseye"></i> Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('get_products') }}">Products</a></li>
+                <li><a href="{{ url_for('get_constraints') }}">Constraints</a></li>
+                <li><a href="{{ url_for('get_usages') }}">Product-Constraints</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('view_csv') }}">CSV</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-cubes"></i> Product-Constraint Assignments</h1>
+            <p>Define how much of each constraint a product consumes</p>
+        </header>
+
+        <div class="card">
+            <h2>Assign Constraints to Product</h2>
+            <div class="info-box">
+                <h3><i class="fa-solid fa-link"></i> Product-Constraint Assignment</h3>
+                <p>This is where optimization happens! Define how much of each constraint a product consumes. Example: 1 unit of "Bread" uses 2.5 machine hours and 1.2 kg of flour.</p>
+            </div>
+            
+            <form action="/api/product-constraints" method="POST" class="form">
+                <div class="form-group">
+                    <label for="productSelect">Select Product *</label>
+                    <select id="productSelect" name="product_id" required>
+                        <option value="">-- Select a Product --</option>
+                        {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                        {% else %}
+                        <option value="" disabled>No products available</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="constraint-matrix">
+                    <h3>Constraint Usage Values</h3>
+                    <p class="help-text">Enter how much of each constraint this product uses per unit</p>
+                    
+                    {% for constraint in constraints %}
+                    <div class="constraint-row">
+                        <label for="constraint_{{ constraint.id }}">{{ constraint.name }}</label>
+                        <input
+                            type="number"
+                            id="constraint_{{ constraint.id }}"
+                            name="constraints[{{ constraint.id }}][usage_value]"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                        >
+                        <input type="hidden" name="constraints[{{ constraint.id }}][constraint_id]" value="{{ constraint.id }}">
+                    </div>
+                    {% else %}
+                    <div class="constraint-row" style="color:#888;">
+                        No constraints available yet.
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Assignments</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-list"></i> Current Assignments</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Constraint</th>
+                            <th>Usage Value</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usage in usages %}
+                        <tr>
+                            <td><strong>{{ usage.product.name }}</strong></td>
+                            <td>{{ usage.constraint.name }}</td>
+                            <td>{{ usage.usage_value }}</td>
+                            <td>
+                                <div class="actions">
+                                    <form action="{{ url_for('delete_usages', response=usage.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Are you sure?')">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align:center;">No assignments found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+</body>
+</html>

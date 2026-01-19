@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"> Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('get_products') }}">Products</a></li>
+                <li><a href="{{ url_for('get_constraints') }}">Constraints</a></li>
+                <li><a href="{{ url_for('get_usages') }}">Product-Constraints</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('view_csv') }}">CSV</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1><i class="fa-solid fa-chart-line"></i> Optimization Dashboard</h1>
+            <p>Final production plan and detailed resource utilization</p>
+        </header>
+
+        {% set csv_mode = request.args.get('name') == 'csv_file' or ('.csv' in request.args.get('name', '')) %}
+        {% if not csv_mode %}
+        <!-- Optimization Control -->
+        <div class="card">
+            <h2>Run Optimization</h2>
+            <p>Calculate the optimal product mix to maximize profit based on your current products, constraints, and assignments.</p>
+            
+            <form action="{{ url_for('run_optimization') }}" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-bolt"></i> Run Optimization
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Optimization Results -->
+        {% if results %}
+        <div class="card">
+            <h2><i class="fa-solid fa-boxes-stacked"></i> Product Quantities</h2>
+            
+            {% set quantities = results|selectattr('quantity_name')|list %}
+            {% if quantities %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Optimal Quantity</th>
+                            <th>Unit Profit</th>
+                            <th>Total Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in quantities %}
+                        <tr>
+                            <td><strong>{{ result.quantity_name }}</strong></td>
+                            <td>{{ "%.4f"|format(result.quantity_value) }}</td>
+                            <td>₦{{ "%.2f"|format(result.max_value / result.quantity_value) if result.quantity_value > 0 else 0 }}</td>
+                            <td>₦{{ "%.2f"|format(result.max_value) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="info-box" style="margin-top: 1rem;">
+                <h3>Total Optimal Profit: ₦{{ "%.2f"|format(quantities[0].optimized_profit) if quantities else 0 }}</h3>
+            </div>
+            
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <a href="{{ url_for('download_results') }}" class="btn btn-primary">
+                    <i class="fa-solid fa-download"></i> Download Results as CSV
+                </a>
+            </div>
+            {% else %}
+            <p style="color: #666;">No optimization results available yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Resource Usage -->
+        <div class="card">
+            <h2><i class="fa-solid fa-chart-bar"></i> Resource Usage Summary</h2>
+            
+            {% set usages = results|selectattr('usage_name')|list %}
+            {% if usages %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resource</th>
+                            <th>Used</th>
+                            <th>Limit</th>
+                            <th>Utilization</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in usages %}
+                        <tr>
+                            <td><strong>{{ result.usage_name }}</strong></td>
+                            <td>{{ "%.4f"|format(result.usage_value) }}</td>
+                            <td>{{ "%.4f"|format(result.usage_limit) }}</td>
+                            <td>
+                                <div class="progress-bar" style="width: 100%; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+                                    <div style="width: {{ result.usage_percent }}%; background: {% if result.usage_percent >= 95 %}#e74c3c{% elif result.usage_percent >= 75 %}#f39c12{% else %}#27ae60{% endif %}; padding: 4px; text-align: center; color: white; font-weight: bold;">
+                                        {{ "%.1f"|format(result.usage_percent) }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="color: #666;">No resource usage data available yet.</p>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="card">
+            <p style="text-align: center; color: #666;">Run optimization to see results here.</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

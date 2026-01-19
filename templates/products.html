@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+        <div class="nav-container">
+            <div class="logo">Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('get_products') }}">Products</a></li>
+                <li><a href="{{ url_for('get_constraints') }}">Constraints</a></li>
+                <li><a href="{{ url_for('get_usages') }}">Product-Constraints</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('view_csv') }}">CSV</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1><i class="fa-solid fa-cart-shopping"></i> Products Management</h1>
+            <p>Add and manage products with profit margins and quantity limits</p>
+        </header>
+
+        <div class="card">
+            <h2>Add New Product</h2>
+            <div class="info-box">
+                <h3>What is a Product?</h3>
+                <p>Define products you want to optimize. Each product has a profit margin, unit type, and quantity limits.</p>
+            </div>
+            
+            <form action="{{ url_for('add_product') }}" method="POST" class="form">
+                <div class="form-group">
+                    <label for="productName">Product Name *</label>
+                    <input type="text" id="productName" name="name" placeholder="e.g., Bread" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profitPerUnit">Profit per Unit *</label>
+                        <input type="number" id="profitPerUnit" name="profit" placeholder="e.g., 50.00" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unit">Unit *</label>
+                        <input type="text" id="unit" name="unit" placeholder="e.g., kg, pcs, liters" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="minQuantity">Min Quantity *</label>
+                        <input type="number" id="minQuantity" name="min_quantity" placeholder="e.g., 0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxQuantity">Max Quantity *</label>
+                        <input type="number" id="maxQuantity" name="max_quantity" placeholder="e.g., 1000" step="0.01" required>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"> Save Product</button>
+                    <button type="reset" class="btn btn-secondary"> Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Products List</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Profit per Unit</th>
+                        <th>Unit</th>
+                        <th>Min Quantity</th>
+                        <th>Max Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td><strong>{{ product.name }}</strong></td>
+                        <td>${{ product.profit }}</td>
+                        <td>{{ product.unit }}</td>
+                        <td>{{ product.min_quantity }}</td>
+                        <td>{{ product.max_quantity }}</td>
+                        <td>
+                            <div class="actions">
+                                <form action="{{ url_for('delete_product', response=product.id) }}" method="POST" style="display:inline;">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-small btn-danger"
+                                        onclick="return confirm('Are you sure you want to delete this product?')">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;">No products found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+</body>
+</html>

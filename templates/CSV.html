@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxfit - Upload Results (CSV)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><i class="fa-solid fa-bullseye"></i> Maxfit</div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('get_products') }}">Products</a></li>
+                <li><a href="{{ url_for('get_constraints') }}">Constraints</a></li>
+                <li><a href="{{ url_for('get_usages') }}">Product-Constraints</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('view_csv') }}" class="active">CSV</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1><i class="fa-solid fa-file-csv"></i> Upload Optimization Results</h1>
+            <p>Upload a CSV file containing optimization output for analysis</p>
+        </header>
+
+        <!-- Upload Card -->
+        <div class="card">
+            <h2>Upload CSV File</h2>
+
+            <div class="info-box">
+                <h3>CSV File Format</h3>
+                <p>
+                    The CSV file should contain optimization output such as product quantities,
+                    profit values, and resource usage. This allows the dashboard to visualize
+                    results generated externally.
+                </p>
+            </div>
+
+            <form action="{{ url_for('upload_csv_file') }}" method="POST" enctype="multipart/form-data" class="form">
+                <div class="form-group">
+                    <label for="csvFile">Select CSV File *</label>
+                    <input type="file" id="csvFile" name="file" accept=".csv" required
+                           style="padding: 12px 18px; border: 2px dashed var(--accent); border-radius: 8px; cursor: pointer;">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Results
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sample CSV Format -->
+        <div class="card">
+            <h2>Sample CSV Structure</h2>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>product_id</th>
+                            <th>product_name</th>
+                            <th>unit_profit</th>
+                            <th>Material</th>
+                            <th>Time</th>
+                            <th>Energy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>J001</td>
+                            <td>Grinding</td>
+                            <td>61</td>
+                            <td>3.17</td>
+                            <td>76</td>
+                            <td>11.42</td>
+                        </tr>
+                        <tr>
+                            <td>J002</td>
+                            <td>Grinding</td>
+                            <td>104</td>
+                            <td>3.35</td>
+                            <td>79</td>
+                            <td>6.61</td>
+                        </tr>
+                        <tr>
+                            <td>J003</td>
+                            <td>Additive</td>
+                            <td>46</td>
+                            <td>2.29</td>
+                            <td>56</td>
+                            <td>11.11</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="text-align: center; font-style: italic;">... (more products) ...</td>
+                        </tr>
+                        <tr style="background-color: #f0f0f0; font-weight: bold;">
+                            <td>LIMITS</td>
+                            <td></td>
+                            <td></td>
+                            <td>5.0</td>
+                            <td>120</td>
+                            <td>14.0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="info-box" style="margin-top: 1rem;">
+                <p><strong>Note:</strong> The last row with "LIMITS" defines the maximum available values for each constraint (Material, Time, Energy).</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Maxfit. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
