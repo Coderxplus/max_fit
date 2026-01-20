@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped , mapped_column
 from flask_migrate import Migrate
@@ -141,6 +141,7 @@ def dashboard():
 
 #Constraint Endpoints
 @app.route("/api/constraints", methods=["POST"])
+# for  for adding the constraints in database
 def add_constraints():
     name = request.form["name"]
     max_value = request.form["max_value"]
@@ -150,6 +151,7 @@ def add_constraints():
     return redirect(url_for("get_constraints"))
 
 @app.route("/api/constraints/<int:constraint_id>", methods=["POST"])
+# for deleting the constraints in database
 def delete_constraints(constraint_id):
     constraint = Constraint.query.filter_by(id=constraint_id).first_or_404()
     
@@ -162,6 +164,7 @@ def delete_constraints(constraint_id):
 
 
 #Usage Endpoints
+# for addding the usages in database
 @app.route("/api/product-constraints", methods=["POST"])
 def add_usages():
     product_id = request.form["product_id"]
@@ -182,6 +185,7 @@ def add_usages():
     db.session.commit()
     return redirect(url_for("get_usages"))
 
+# for deleting the usages in database
 @app.route("/delete_usages/<int:response>", methods=["POST"])
 def delete_usages(response):
     data = ProductConstraint.query.filter_by(id=response).first_or_404()
@@ -206,9 +210,9 @@ def upload_csv_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            optimizer.csv_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            optimizer.load_csv()
-            results = optimizer.solve_lp()
+            optimizer.csv_file = os.path.join(app.config['UPLOAD_FOLDER'], filename) #sends csv file for processing in profit_optimizer object
+            optimizer.load_csv()# runs load csv method in profit_optimizer class
+            results = optimizer.solve_lp() # runs profit_optimizer class
             # Clear previous results
             Results.query.delete()  
             # Save results to database
@@ -307,18 +311,25 @@ def optimize():
 
 @app.route("/api/optimize", methods=["POST"])
 def run_optimization():
+    # endpoint to run optimization function and redirect to result page
     optimize()
     return redirect(url_for("get_result"))
 
 @app.route("/results", methods=["GET"]) 
 def get_result():
+    # endpoint to get reults form database
     redirect(url_for("run_optimization"))
     results = Results.query.all()
     return render_template("dashboard.html", results=results)
 
+
+
 @app.route("/download_results", methods=["GET"]) 
 def download_results():
-    pass
+    #  endpoint for allowing user to download results as csv
+    return send_from_directory(app.config["UPLOAD_FOLDER"], "out.csv")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

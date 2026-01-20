@@ -1,3 +1,4 @@
+import os
 import pulp
 import pandas as pd
 
@@ -6,7 +7,8 @@ class Product:
     def __init__(self, name, profit, usage):
         self.name = name
         self.profit = profit
-        self.usage = usage   # dict of constraint usage e.g {"Time": 3, "Labour": 4} # list of Constraints objects
+        self.usage = usage 
+          # dict of constraint usage e.g {"Time": 3, "Labour": 4} # list of Constraints objects
 
     def __str__(self):
         # Display constraints nicely
@@ -45,6 +47,7 @@ class ProfitOptimizer:
         self.no_of_constraints = no_of_constraints
         self.products = []
         self.constraints_list = []
+        self.csv_result = []
         
 
     def collect_constraints(self, name, max_val):
@@ -131,92 +134,57 @@ class ProfitOptimizer:
                 "percent": percent
             })
 
+        
+        self.csv_result.append(results)
+        self.to_csv()
         return results
-def solve_lp(self):
-    """Build and solve the LP model and return results."""
-    
-    model = pulp.LpProblem("Product_Mix_Optimization", pulp.LpMaximize)
 
-    # Create variables
-    qty_vars = {
-        p.name: pulp.LpVariable(p.name, lowBound=0, cat="Continuous")
-        for p in self.products
-    }
-
-    # Objective function
-    model += pulp.lpSum(
-        qty_vars[p.name] * p.profit
-        for p in self.products
-    )
-
-    # Constraints
-    for constraint in self.constraints_list:
-        model += (
-            pulp.lpSum(
-                qty_vars[p.name] * p.usage.get(constraint.name, 0)
-                for p in self.products
-            )
-            <= constraint.max_value,
-            constraint.name
-        )
-
-    # Solve
-    model.solve()
-
-    total_profit = pulp.value(model.objective)
-
-    results = {
-        "total_profit": total_profit,
-        "quantities": [],
-        "resource_usage": []
-    }
-
-    # Non-zero quantities
-    for p in self.products:
-        qty = qty_vars[p.name].varValue
-        if qty and qty > 0:
-            results["quantities"].append({
-                "product_name": p.name,
-                "quantity": qty,
-                "profit": p.profit,
-                "total_product_profit": qty * p.profit
-            })
-
-    # Resource usage summary
-    for constraint in self.constraints_list:
-        used = sum(
-            qty_vars[p.name].varValue * p.usage.get(constraint.name, 0)
-            for p in self.products
-            if qty_vars[p.name].varValue is not None
-        )
-
-        percent = (
-            (used / constraint.max_value) * 100
-            if constraint.max_value != 0
-            else 0
-        )
-
-        results["resource_usage"].append({
-            "constraint_name": constraint.name,
-            "used": used,
-            "limit": constraint.max_value,
-            "percent": percent
-        })
-
-    return results
 
     def run(self):
-        # self.collect_counts()
-        # self.collect_constraints()
-        # self.collect_products()
-        # self.csv_file="LP_engine\csv_file\hybrid_manufacturing_cleaned.csv"
-        # self.load_from_csv()
-        self.solve_lp()   
-        self.output()
+        self.csv_file="LP_engine\csv_file\hybrid_manufacturing_cleaned.csv"
+        self.load_csv()
 
-    def output(self):
-        for product in self.products:
-            print(product.to_dict())
+        self.solve_lp()   
+
+    def to_csv(self):
+        """Flatten self.csv_result into rows and save to uploads/out.csv."""
+        rows = []
+        for res in self.csv_result:
+            total_profit = res.get("total_profit", 0)
+            for qty in res.get("quantities", []):
+                rows.append({
+                    "section": "product_quantity",
+                    "product_name": qty.get("product_name"),
+                    "quantity": qty.get("quantity"),
+                    "unit_profit": qty.get("profit"),
+                    "total_product_profit": qty.get("total_product_profit"),
+                    "constraint_name": "",
+                    "used": "",
+                    "limit": "",
+                    "percent": "",
+                    "total_profit": total_profit,
+                })
+            for usage in res.get("resource_usage", []):
+                rows.append({
+                    "section": "resource_usage",
+                    "product_name": "",
+                    "quantity": "",
+                    "unit_profit": "",
+                    "total_product_profit": "",
+                    "constraint_name": usage.get("constraint_name"),
+                    "used": usage.get("used"),
+                    "limit": usage.get("limit"),
+                    "percent": usage.get("percent"),
+                    "total_profit": total_profit,
+                })
+
+        if not rows:
+            return
+
+        out_path = "uploads/out.csv"
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        df = pd.DataFrame(rows)
+        df.to_csv(out_path, index=False)
 
 
 if __name__ == "__main__":

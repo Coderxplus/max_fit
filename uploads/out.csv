@@ -1,0 +1,5 @@
+section,product_name,quantity,unit_profit,total_product_profit,constraint_name,used,limit,percent,total_profit
+product_quantity,J014,1.0714286,372.0,398.5714392,,,,,398.5714392
+resource_usage,,,,,Material,2.496428638,5.0,49.928572759999994,398.5714392
+resource_usage,,,,,Time,120.0000032,120.0,100.00000266666666,398.5714392
+resource_usage,,,,,Energy,2.1535714859999997,14.0,15.38265347142857,398.5714392

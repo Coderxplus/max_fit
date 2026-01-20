@@ -1,0 +1,2 @@
+total_profit,quantities,resource_usage
+398.5714392,"[{'product_name': 'J014', 'quantity': 1.0714286, 'profit': 372.0, 'total_product_profit': 398.5714392}]","[{'constraint_name': 'Material', 'used': 2.496428638, 'limit': 5.0, 'percent': 49.928572759999994}, {'constraint_name': 'Time', 'used': 120.0000032, 'limit': 120.0, 'percent': 100.00000266666666}, {'constraint_name': 'Energy', 'used': 2.1535714859999997, 'limit': 14.0, 'percent': 15.38265347142857}]"
